@@ -34,5 +34,41 @@ namespace NetFundamentals.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Edit(int id)
+        {
+            var customer = repository.GetById(x => x.CustomerId == id);
+            if (customer == null) return RedirectToAction("Index");
+            return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Customer customer)
+        {
+            if (!ModelState.IsValid) return View(customer);
+            repository.Update(customer);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Delete(int id)
+        {
+            var customer = repository.GetById(x => x.CustomerId == id);
+            if (customer == null) return RedirectToAction("Index");
+            return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(Customer customer)
+        {
+            repository.Delete(customer);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Details(int id)
+        {
+            var customer = repository.GetById(x => x.CustomerId == id);
+            if (customer == null) return RedirectToAction("Index");
+            return View(customer);
+        }
+
     }
 }
