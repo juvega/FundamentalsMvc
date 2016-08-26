@@ -8,6 +8,8 @@ using System.Web.Mvc;
 
 namespace NetFundamentals.Web.Controllers
 {
+    [ExceptionControl]
+    [Authorize]
     public class CustomerController : Controller
     {
         private IRepository<Customer> repository;

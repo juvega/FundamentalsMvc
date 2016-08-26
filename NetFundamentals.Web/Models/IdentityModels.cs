@@ -21,7 +21,7 @@ namespace NetFundamentals.Web.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("Identity", throwIfV1Schema: false)
         {
         }
 

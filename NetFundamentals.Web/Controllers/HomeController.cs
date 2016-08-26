@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace NetFundamentals.Web.Controllers
 {
+    [ExceptionControl]
     public class HomeController : Controller
     {
         public ActionResult Index()
