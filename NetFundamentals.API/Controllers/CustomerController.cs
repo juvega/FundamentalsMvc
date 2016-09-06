@@ -1,15 +1,19 @@
-﻿using NetFundamentals.Model;
+﻿using NetFundamentals.API.Models;
+using NetFundamentals.Model;
 using NetFundamentals.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace NetFundamentals.API.Controllers
 {
-    [Route("customer")]
+    //[Authorize]
+    [RoutePrefix("customer")]
     public class CustomerController : ApiController
     {
         private IRepository<Customer> repository;
@@ -18,8 +22,10 @@ namespace NetFundamentals.API.Controllers
         {
             repository = new BaseRepository<Customer>();
         }
+
+        [Authorize]
         [HttpGet]
-        [Route("customer/{id:int}")]
+        [Route("{id:int}")]
         public IHttpActionResult CustomeById(int id)
         {
             return Ok(repository.GetById(x => x.CustomerId == id));
@@ -44,6 +50,30 @@ namespace NetFundamentals.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return Ok(repository.Delete(customer));
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("file")]
+        public IHttpActionResult Upload()
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            string uploadPath = HttpContext.Current.Server.MapPath("~/uploads/");
+            string picturePath = HttpContext.Current.Server.MapPath("~/pictures/");
+            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
+            if (!Request.Content.IsMimeMultipartContent())
+                return BadRequest();
+
+            var provider = new MultipartFormDataStreamProvider(uploadPath);
+
+            Request.Content.ReadAsMultipartAsync(provider);
+            foreach (var file in provider.FileData)
+            {   
+                string filename = file.Headers.ContentDisposition.FileName.Replace("\"",string.Empty);                
+                File.Copy(file.LocalFileName, Path.Combine(picturePath, filename));
+            }
+            return Ok();
         }
     }
 }
